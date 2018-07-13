@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.19",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "CharTest",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
