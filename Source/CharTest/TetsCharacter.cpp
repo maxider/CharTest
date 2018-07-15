@@ -9,9 +9,14 @@ ATetsCharacter::ATetsCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Camera = CreateAbstractDefaultSubobject<UCameraComponent>(TEXT("CamComponent"));
+	//Setup Cam
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CamComponent"));
 	Camera->SetupAttachment(RootComponent);
 	Camera->SetRelativeLocation(FVector(0, 0, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+
+	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Gun Mesh"));
+	GunMesh->SetupAttachment(RootComponent);
+	GunMesh->SetRelativeLocation(GunOffset);
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
@@ -28,7 +33,7 @@ void ATetsCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Acto Rotatoin
+	//Actor Rotation
 	FRotator newYaw = GetActorRotation();
 	FRotator newPitch = Camera->GetComponentRotation();
 	newYaw.Yaw += MouseInput.X;
@@ -48,8 +53,11 @@ void ATetsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("Turn", this, &ATetsCharacter::Turn);
 	PlayerInputComponent->BindAxis("Pitch", this, &ATetsCharacter::Pitch);
 
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &ATetsCharacter::Shoot);
+
 }
 
+//Movement Functions
 void ATetsCharacter::MoveForward(float axis) {
 	FRotator Rotation = GetControlRotation();
 	Rotation.Pitch = 0;
@@ -67,10 +75,18 @@ void ATetsCharacter::MoveRight(float axis) {
 }
 
 void ATetsCharacter::Turn(float axis) {
-	 MouseInput.X = -axis * SensX;
+	MouseInput.X = -axis * SensX;
 }
 
 void ATetsCharacter::Pitch(float axis) {
 	MouseInput.Y = axis * SensY;
 }
 
+void ATetsCharacter::Shoot() {
+	FHitResult* HitResult = new FHitResult();
+	FVector StartTrace = Camera->GetForwardVector();
+	FVector EndTrace = (StartTrace * 5000.f) + StartTrace;
+	FCollisionQueryParams CQP = new FCollisionQueryParams();
+
+	//if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *CQP))
+}

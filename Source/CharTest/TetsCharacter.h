@@ -7,6 +7,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "WorldCollision.h"
 #include "TetsCharacter.generated.h"
 
 UCLASS()
@@ -30,16 +32,23 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UCameraComponent* Camera;
+	UPROPERTY(EditAnywhere, Category = "Gun")
+		UStaticMeshComponent* GunMesh;
+	UPROPERTY(EditAnywhere, Category = "Gun")
+		FVector GunOffset;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Movement")
 		float Speed = 3.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Movement")
 		float SensX = 15.0f;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Movement")
 		float SensY = 15.0f;
+
+	
+	
 	FVector2D MouseInput;
 
-
+	
 	UFUNCTION()
 		void MoveForward(float axis);
 	UFUNCTION()
@@ -48,4 +57,6 @@ public:
 		void Turn(float axis);
 	UFUNCTION()
 		void Pitch(float axis);
+	UFUNCTION()
+		void Shoot();
 };
