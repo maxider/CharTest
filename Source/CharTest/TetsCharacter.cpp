@@ -25,7 +25,6 @@ ATetsCharacter::ATetsCharacter()
 void ATetsCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -35,10 +34,11 @@ void ATetsCharacter::Tick(float DeltaTime)
 
 	//Actor Rotation
 	FRotator newYaw = GetActorRotation();
-	FRotator newPitch = Camera->GetComponentRotation();
 	newYaw.Yaw += MouseInput.X;
-	newPitch.Pitch = FMath::Clamp(newPitch.Pitch + MouseInput.Y, -80.f, 80.f);
 	SetActorRotation(newYaw);
+
+	FRotator newPitch = Camera->GetComponentRotation();
+	newPitch.Pitch = FMath::Clamp(newPitch.Pitch + MouseInput.Y, -80.f, 80.f);
 	Camera->SetWorldRotation(newPitch);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("newRoation Yaw: %f"), newRotation.Pitch));
@@ -59,34 +59,40 @@ void ATetsCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 //Movement Functions
 void ATetsCharacter::MoveForward(float axis) {
-	FRotator Rotation = GetControlRotation();
-	Rotation.Pitch = 0;
-
-	FVector ForwardVector = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
-	AddMovementInput(ForwardVector, axis * Speed);
+	AddMovementInput(GetActorForwardVector(), axis * Speed);
+	DrawDebugLine(GetWorld(), GetActorLocation(), GetActorForwardVector(), FColor::Red, false, 1.f, 0, 2.f);
 }
 
 void ATetsCharacter::MoveRight(float axis) {
-	FRotator Rotation = GetControlRotation();
-	Rotation.Pitch = 0;
 
-	FVector RightVector = FRotationMatrix(Rotation).GetScaledAxis(EAxis::Y);
-	AddMovementInput(RightVector, axis * Speed);
+	AddMovementInput(GetActorRightVector(), axis * Speed);
 }
 
 void ATetsCharacter::Turn(float axis) {
-	MouseInput.X = -axis * SensX;
+	MouseInput.X = axis;
 }
 
 void ATetsCharacter::Pitch(float axis) {
-	MouseInput.Y = axis * SensY;
+	MouseInput.Y = axis;
 }
 
 void ATetsCharacter::Shoot() {
-	FHitResult* HitResult = new FHitResult();
 	FVector StartTrace = Camera->GetForwardVector();
 	FVector EndTrace = (StartTrace * 5000.f) + StartTrace;
-	FCollisionQueryParams CQP = new FCollisionQueryParams();
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
 
-	//if (GetWorld()->LineTraceSingleByChannel(*HitResult, StartTrace, EndTrace, ECC_Visibility, *CQP))
+	GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, CollisionParams);
+	DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor::Red, false, 3.f, 0, 1.f);
+
+	/*
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, *CQP)) {
+		DrawDebugLine(GetWorld(), StartTrace,EndTrace,FColor(255,0,0),true))
+
+		if (HitResult->GetActor() != NULL) {
+			HitResult->GetActor()->Destroy();
+		}
+
+	}
+	*/
 }

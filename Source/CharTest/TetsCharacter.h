@@ -9,6 +9,8 @@
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "WorldCollision.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 #include "TetsCharacter.generated.h"
 
 UCLASS()
@@ -38,11 +40,11 @@ public:
 		FVector GunOffset;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-		float Speed = 3.0f;
+		float Speed = 1.0f;
 	UPROPERTY(EditAnywhere, Category = "Movement")
-		float SensX = 15.0f;
+		float SensX = 5.0f;
 	UPROPERTY(EditAnywhere, Category = "Movement")
-		float SensY = 15.0f;
+		float SensY = 5.0f;
 
 	
 	
